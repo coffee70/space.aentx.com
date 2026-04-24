@@ -15,7 +15,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-6 text-center pb-[8vh]">
+        <div className="flex flex-1 items-start justify-center px-6 text-center pt-[18vh]">
           <div className="max-w-[860px]">
             <h1 className="text-[clamp(2.6rem,6vw,6.5rem)] leading-[0.92] tracking-[-0.07em] font-medium">
               Build the operating layer for humanity beyond Earth.
