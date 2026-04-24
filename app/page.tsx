@@ -8,7 +8,7 @@ export default function Home() {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-svh">
-        <div className="fixed top-0 left-0 right-0 h-[72px] flex items-center px-8 z-20">
+        <div className="fixed top-0 left-0 right-0 h-18 flex items-center px-8 z-20">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white rounded-full" />
             <span className="text-lg font-semibold tracking-tight">Aentx</span>
@@ -16,7 +16,7 @@ export default function Home() {
         </div>
 
         <div className="flex flex-1 items-start justify-center px-6 text-center pt-[18vh]">
-          <div className="max-w-[860px]">
+          <div className="max-w-215">
             <h1 className="text-[clamp(2.6rem,6vw,6.5rem)] leading-[0.92] tracking-[-0.07em] font-medium">
               Build the operating layer for humanity beyond Earth.
             </h1>
