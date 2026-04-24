@@ -1,14 +1,10 @@
-import dynamic from "next/dynamic";
-
-const SpaceBackground = dynamic(() => import("@/components/space-background"), {
-  ssr: false,
-});
+import SpaceBackgroundClient from "@/components/space-background-client";
 
 export default function Home() {
   return (
     <main className="relative min-h-svh overflow-hidden bg-black text-white">
       <div className="fixed inset-0 z-0">
-        <SpaceBackground />
+        <SpaceBackgroundClient />
       </div>
 
       <div className="relative z-10 flex flex-col min-h-svh">
