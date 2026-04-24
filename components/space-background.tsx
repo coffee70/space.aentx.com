@@ -5,16 +5,16 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
-const EARTH_CENTER_Y = -700;
-const EARTH_RADIUS = 200.0;
-const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 8;
+const EARTH_CENTER_Y = -2.4;
+const EARTH_RADIUS = 3.2;
+const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 0.12;
 
 function CameraMotion() {
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     state.camera.position.x = Math.sin(t * 0.04) * 0.035;
     state.camera.position.y = 1.02 + Math.sin(t * 0.032) * 0.02;
-    state.camera.lookAt(0, -1.75, 0);
+    state.camera.lookAt(0, -1.15, 0);
   });
 
   return null;
