@@ -5,12 +5,17 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
+const EARTH_CENTER_Y = -5.95;
+const EARTH_RADIUS = 5.15;
+const HORIZON_Y = -0.95;
+const HORIZON_Z = 0.65;
+
 function CameraMotion() {
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    state.camera.position.x = Math.sin(t * 0.055) * 0.06;
-    state.camera.position.y = 0.72 + Math.sin(t * 0.045) * 0.035;
-    state.camera.lookAt(0, -0.82, 0);
+    state.camera.position.x = Math.sin(t * 0.045) * 0.045;
+    state.camera.position.y = 0.92 + Math.sin(t * 0.035) * 0.025;
+    state.camera.lookAt(0, -1.12, 0);
   });
 
   return null;
@@ -30,6 +35,7 @@ function SunGlare() {
       new ShaderMaterial({
         transparent: true,
         depthWrite: false,
+        depthTest: false,
         blending: AdditiveBlending,
         uniforms: {
           uTime: { value: 0 },
@@ -46,34 +52,29 @@ function SunGlare() {
           varying vec2 vUv;
           uniform float uTime;
 
-          float hash(float n) {
-            return fract(sin(n) * 43758.5453123);
-          }
-
           void main() {
-            vec2 center = vec2(0.5, 0.5);
-            vec2 p = vUv - center;
-            float dist = length(p);
-            float angle = atan(p.y, p.x);
+            vec2 p = vUv - vec2(0.5);
+            float d = length(p);
+            float a = atan(p.y, p.x);
 
-            float radialFalloff = smoothstep(0.55, 0.0, dist);
-            float coreBurn = smoothstep(0.18, 0.0, dist);
+            float core = smoothstep(0.16, 0.0, d);
+            float halo = smoothstep(0.52, 0.02, d);
 
             float rays = 0.0;
-            rays += pow(max(0.0, sin(angle * 9.0 + uTime * 0.18)), 18.0) * 0.55;
-            rays += pow(max(0.0, sin(angle * 17.0 - uTime * 0.11)), 28.0) * 0.35;
-            rays += pow(max(0.0, sin(angle * 31.0 + uTime * 0.07)), 42.0) * 0.22;
+            rays += pow(max(0.0, sin(a * 8.0 + uTime * 0.12)), 22.0) * 0.55;
+            rays += pow(max(0.0, sin(a * 15.0 - uTime * 0.09)), 32.0) * 0.38;
+            rays += pow(max(0.0, sin(a * 27.0 + uTime * 0.05)), 44.0) * 0.22;
 
-            float horizontalFlare = pow(1.0 - abs(p.y) * 3.5, 8.0) * smoothstep(0.58, 0.02, abs(p.x));
-            float verticalFlare = pow(1.0 - abs(p.x) * 8.0, 4.0) * smoothstep(0.28, 0.0, abs(p.y));
+            float horizontal = exp(-abs(p.y) * 22.0) * smoothstep(0.68, 0.04, abs(p.x));
+            float vertical = exp(-abs(p.x) * 38.0) * smoothstep(0.28, 0.0, abs(p.y));
 
-            float alpha = radialFalloff * 0.08;
-            alpha += coreBurn * 0.42;
-            alpha += rays * radialFalloff * 0.28;
-            alpha += horizontalFlare * 0.18;
-            alpha += verticalFlare * 0.05;
+            float alpha = core * 0.7;
+            alpha += halo * 0.09;
+            alpha += rays * halo * 0.36;
+            alpha += horizontal * 0.22;
+            alpha += vertical * 0.04;
 
-            vec3 color = mix(vec3(0.42, 0.72, 1.0), vec3(1.0), coreBurn + rays * 0.7);
+            vec3 color = mix(vec3(0.35, 0.68, 1.0), vec3(1.0), core + rays);
             gl_FragColor = vec4(color, alpha);
           }
         `,
@@ -82,25 +83,22 @@ function SunGlare() {
   );
 
   return (
-    <group position={[0, -0.98, 1.05]}>
-      <pointLight intensity={95} distance={20} color="#ffffff" />
+    <group position={[0, HORIZON_Y + 0.03, 1.18]}>
+      <pointLight intensity={110} distance={24} color="#ffffff" />
 
-      {/* Tiny physical sun core. It is intentionally overpowered by glare. */}
       <mesh>
-        <sphereGeometry args={[0.045, 32, 32]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.92} blending={AdditiveBlending} depthWrite={false} />
+        <sphereGeometry args={[0.022, 24, 24]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.55} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      {/* Procedural glare and rays hide the sun dot and make it feel painfully bright. */}
-      <mesh position={[0, 0, -0.02]} scale={[3.3, 3.3, 1]}>
-        <planeGeometry args={[1, 1, 1, 1]} />
+      <mesh position={[0, 0, -0.04]} scale={[2.15, 2.15, 1]}>
+        <planeGeometry args={[1, 1]} />
         <primitive object={raysMaterial} attach="material" ref={raysRef} />
       </mesh>
 
-      {/* Large soft bloom around the rays. */}
-      <mesh position={[0, 0, -0.03]}>
-        <circleGeometry args={[2.8, 128]} />
-        <meshBasicMaterial color="#8fcfff" transparent opacity={0.045} blending={AdditiveBlending} depthWrite={false} />
+      <mesh position={[0, 0, -0.06]}>
+        <circleGeometry args={[2.1, 128]} />
+        <meshBasicMaterial color="#77bbff" transparent opacity={0.035} blending={AdditiveBlending} depthWrite={false} depthTest={false} />
       </mesh>
     </group>
   );
@@ -108,23 +106,20 @@ function SunGlare() {
 
 function AtmosphericRing() {
   return (
-    <group position={[0, -1.055, 0.88]}>
-      {/* Wide ionized glow hugging the limb. */}
-      <mesh scale={[1, 0.08, 1]}>
-        <torusGeometry args={[2.32, 0.08, 24, 256, Math.PI]} />
-        <meshBasicMaterial color="#7fc8ff" transparent opacity={0.28} blending={AdditiveBlending} depthWrite={false} />
+    <group position={[0, HORIZON_Y, HORIZON_Z]} rotation={[0, 0, 0]}>
+      <mesh scale={[1, 0.105, 1]}>
+        <torusGeometry args={[3.72, 0.105, 32, 320, Math.PI]} />
+        <meshBasicMaterial color="#68bdff" transparent opacity={0.22} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      {/* Bright white-hot edge where the sun catches the atmosphere. */}
-      <mesh scale={[1, 0.055, 1]}>
-        <torusGeometry args={[2.27, 0.025, 18, 256, Math.PI]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.85} blending={AdditiveBlending} depthWrite={false} />
+      <mesh scale={[1, 0.06, 1]}>
+        <torusGeometry args={[3.68, 0.028, 24, 320, Math.PI]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.92} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      {/* Larger blue falloff above the limb. */}
-      <mesh scale={[1, 0.17, 1]}>
-        <torusGeometry args={[2.36, 0.18, 24, 256, Math.PI]} />
-        <meshBasicMaterial color="#3f9dff" transparent opacity={0.08} blending={AdditiveBlending} depthWrite={false} />
+      <mesh scale={[1, 0.22, 1]}>
+        <torusGeometry args={[3.82, 0.24, 32, 320, Math.PI]} />
+        <meshBasicMaterial color="#2f8cff" transparent opacity={0.055} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -133,15 +128,14 @@ function AtmosphericRing() {
 function Earth() {
   return (
     <group>
-      <mesh position={[0, -2.5, 0]} scale={[3.65, 3.65, 3.65]}>
-        <sphereGeometry args={[1, 160, 160]} />
-        <meshStandardMaterial color="#07101c" roughness={1} metalness={0} />
+      <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS, EARTH_RADIUS, EARTH_RADIUS]}>
+        <sphereGeometry args={[1, 192, 192]} />
+        <meshStandardMaterial color="#050a12" roughness={1} metalness={0} />
       </mesh>
 
-      {/* Back-side rim shell gives the planet a faint readable edge without making it look blue. */}
-      <mesh position={[0, -2.5, 0]} scale={[3.68, 3.68, 3.68]}>
-        <sphereGeometry args={[1, 160, 160]} />
-        <meshBasicMaterial color="#10233a" transparent opacity={0.12} blending={AdditiveBlending} side={BackSide} depthWrite={false} />
+      <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035]}>
+        <sphereGeometry args={[1, 192, 192]} />
+        <meshBasicMaterial color="#0b2440" transparent opacity={0.08} blending={AdditiveBlending} side={BackSide} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -151,7 +145,7 @@ export default function SpaceBackground() {
   return (
     <Canvas
       style={{ display: "block", width: "100vw", height: "100vh" }}
-      camera={{ position: [0, 0.72, 5], fov: 50 }}
+      camera={{ position: [0, 0.92, 5.2], fov: 48 }}
       gl={{ antialias: true, alpha: false }}
       onCreated={({ gl }) => {
         gl.setClearColor("#000000", 1);
@@ -159,10 +153,10 @@ export default function SpaceBackground() {
     >
       <color attach="background" args={["#000000"]} />
 
-      <ambientLight intensity={0.12} />
-      <directionalLight position={[0, 2.4, 4]} intensity={0.8} color="#8fcfff" />
+      <ambientLight intensity={0.08} />
+      <directionalLight position={[0, 2.2, 4]} intensity={0.55} color="#8fcfff" />
 
-      <Stars radius={70} depth={42} count={220} factor={1.55} saturation={0} fade speed={0.045} />
+      <Stars radius={75} depth={46} count={190} factor={1.45} saturation={0} fade speed={0.035} />
 
       <SunGlare />
       <AtmosphericRing />
