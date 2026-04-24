@@ -83,7 +83,7 @@ function SunGlare() {
   );
 
   return (
-    <group position={[0, HORIZON_Y + 2, 1.18]}>
+    <group position={[0, EARTH_CENTER_Y - EARTH_RADIUS - 20, 1.18]}>
       <pointLight intensity={90} distance={24} color="#ffffff" />
 
       <mesh>
@@ -132,8 +132,8 @@ export default function SpaceBackground() {
 
       <Stars radius={75} depth={46} count={170} factor={1.35} saturation={0} fade speed={0.025} />
 
-      <SunGlare />
       <Earth />
+      <SunGlare />
 
       <CameraMotion />
     </Canvas>
