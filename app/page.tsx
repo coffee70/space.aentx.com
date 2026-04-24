@@ -3,7 +3,7 @@ import SpaceBackgroundClient from "@/components/space-background-client";
 export default function Home() {
   return (
     <main className="relative min-h-svh overflow-hidden bg-black text-white">
-      <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 z-0 h-svh w-screen">
         <SpaceBackgroundClient />
       </div>
 
