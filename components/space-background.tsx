@@ -2,11 +2,8 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars } from "@react-three/drei";
-import { useRef } from "react";
 
 function CameraDrift() {
-  const ref = useRef<any>();
-
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     state.camera.position.y = 0.8 + Math.sin(t * 0.05) * 0.05;
