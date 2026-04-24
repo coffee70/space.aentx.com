@@ -103,12 +103,12 @@ function Earth() {
     <group>
       <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS, EARTH_RADIUS, EARTH_RADIUS]}>
         <sphereGeometry args={[1, 192, 192]} />
-        <meshStandardMaterial color="#040810" roughness={1} metalness={0} />
+        <meshBasicMaterial color="#ff00cc" />
       </mesh>
 
       <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035]}>
         <sphereGeometry args={[1, 192, 192]} />
-        <meshBasicMaterial color="#0b2440" transparent opacity={0.045} blending={AdditiveBlending} side={BackSide} depthWrite={false} />
+        <meshBasicMaterial color="#ff00cc" transparent opacity={0.35} blending={AdditiveBlending} side={BackSide} depthWrite={false} />
       </mesh>
     </group>
   );
