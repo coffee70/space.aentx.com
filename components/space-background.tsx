@@ -1,7 +1,21 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars } from "@react-three/drei";
+import { useRef } from "react";
+
+function CameraDrift() {
+  const ref = useRef<any>();
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    state.camera.position.y = 0.8 + Math.sin(t * 0.05) * 0.05;
+    state.camera.position.x = Math.sin(t * 0.03) * 0.05;
+    state.camera.lookAt(0, 0, 0);
+  });
+
+  return null;
+}
 
 export default function SpaceBackground() {
   return (
@@ -13,18 +27,30 @@ export default function SpaceBackground() {
 
       {/* Earth */}
       <mesh position={[0, -3.2, 0]} scale={[5, 5, 5]}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 96, 96]} />
         <meshStandardMaterial color="#01030a" roughness={1} />
       </mesh>
 
-      {/* Glow arc */}
-      <mesh position={[0, -2.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[4.8, 0.08, 1]}>
+      {/* layered glow */}
+      <mesh position={[0, -2.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[4.8, 0.06, 1]}>
         <torusGeometry args={[1, 0.01, 16, 256]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.75} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
       </mesh>
 
-      {/* Stars */}
-      <Stars radius={80} depth={40} count={1200} factor={2} saturation={0} fade speed={0.15} />
+      <mesh position={[0, -2.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[5.2, 0.12, 1]}>
+        <torusGeometry args={[1, 0.02, 16, 256]} />
+        <meshBasicMaterial color="#a9d8ff" transparent opacity={0.3} />
+      </mesh>
+
+      <mesh position={[0, -2.2, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[6, 0.2, 1]}>
+        <torusGeometry args={[1, 0.04, 16, 256]} />
+        <meshBasicMaterial color="#a9d8ff" transparent opacity={0.1} />
+      </mesh>
+
+      {/* stars */}
+      <Stars radius={80} depth={40} count={800} factor={2} saturation={0} fade speed={0.1} />
+
+      <CameraDrift />
     </Canvas>
   );
 }
