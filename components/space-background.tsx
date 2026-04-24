@@ -5,10 +5,10 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
-const EARTH_CENTER_Y = -7.45;
-const EARTH_RADIUS = 6.15;
-const HORIZON_Y = -1.9;
-const HORIZON_Z = 0.62;
+const EARTH_CENTER_Y = -700;
+const EARTH_RADIUS = 200.0;
+const HORIZON_Y = -4.0;
+const HORIZON_Z = 10;
 
 function CameraMotion() {
   useFrame((state) => {
@@ -83,7 +83,7 @@ function SunGlare() {
   );
 
   return (
-    <group position={[0, HORIZON_Y + 0.02, 1.18]}>
+    <group position={[0, HORIZON_Y + 2, 1.18]}>
       <pointLight intensity={90} distance={24} color="#ffffff" />
 
       <mesh>
@@ -94,32 +94,6 @@ function SunGlare() {
       <mesh position={[0, 0, -0.04]} scale={[1.75, 1.75, 1]}>
         <planeGeometry args={[1, 1]} />
         <primitive object={raysMaterial} attach="material" ref={raysRef} />
-      </mesh>
-
-      <mesh position={[0, 0, -0.06]}>
-        <circleGeometry args={[2.05, 128]} />
-        <meshBasicMaterial color="#77bbff" transparent opacity={0.03} blending={AdditiveBlending} depthWrite={false} depthTest={false} />
-      </mesh>
-    </group>
-  );
-}
-
-function AtmosphericRing() {
-  return (
-    <group position={[0, HORIZON_Y, HORIZON_Z]}>
-      <mesh scale={[1, 0.045, 1]}>
-        <torusGeometry args={[4.05, 0.07, 28, 360, Math.PI]} />
-        <meshBasicMaterial color="#69bdff" transparent opacity={0.16} blending={AdditiveBlending} depthWrite={false} />
-      </mesh>
-
-      <mesh scale={[1, 0.028, 1]}>
-        <torusGeometry args={[4.02, 0.018, 20, 360, Math.PI]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.78} blending={AdditiveBlending} depthWrite={false} />
-      </mesh>
-
-      <mesh scale={[1, 0.09, 1]}>
-        <torusGeometry args={[4.12, 0.18, 28, 360, Math.PI]} />
-        <meshBasicMaterial color="#2f8cff" transparent opacity={0.035} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -159,7 +133,6 @@ export default function SpaceBackground() {
       <Stars radius={75} depth={46} count={170} factor={1.35} saturation={0} fade speed={0.025} />
 
       <SunGlare />
-      <AtmosphericRing />
       <Earth />
 
       <CameraMotion />
