@@ -7,8 +7,6 @@ import { useMemo, useRef } from "react";
 
 const EARTH_CENTER_Y = -700;
 const EARTH_RADIUS = 200.0;
-const HORIZON_Y = -4.0;
-const HORIZON_Z = 10;
 
 function CameraMotion() {
   useFrame((state) => {
