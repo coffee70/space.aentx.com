@@ -26,3 +26,52 @@ body::after {
   background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.7) 100%);
   z-index: 5;
 }
+
+/* animated star fields */
+.stars-field,
+.stars-field-delayed {
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 3px 3px;
+  animation: drift 120s linear infinite;
+}
+
+.stars-field-delayed {
+  animation-duration: 200s;
+  opacity: 0.4;
+}
+
+@keyframes drift {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-200px);
+  }
+}
+
+/* subtle horizon motion */
+.earth-limb {
+  animation: slow-drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes slow-drift {
+  from {
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    transform: translateX(-50%) translateY(6px);
+  }
+}
+
+.sunrise-line {
+  animation: glow-pulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
