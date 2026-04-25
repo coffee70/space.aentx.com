@@ -25,10 +25,10 @@ export default function Home() {
         <div className="flex flex-1 items-start justify-center px-6 text-center pt-[18vh]">
           <div className="max-w-215">
             <h1 className="text-[clamp(2.6rem,6vw,6.5rem)] leading-[0.92] tracking-[-0.07em] font-medium">
-              Build the operating layer for humanity beyond Earth.
+              Space, reimagined.
             </h1>
             <p className="mt-6 text-[clamp(1rem,1.4vw,1.25rem)] leading-7 text-white/70">
-              Aentx is creating the software foundation for space operations — unifying telemetry, automation, intelligence, and mission infrastructure into a platform built for the next era of human expansion.
+              Aentx builds software for the next generation of space operations.
             </p>
           </div>
         </div>
