@@ -5,9 +5,9 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
-const EARTH_CENTER_Y = -2.4;
-const EARTH_RADIUS = 3.2;
-const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 0.12;
+const EARTH_CENTER_Y = -13.9;
+const EARTH_RADIUS = 10.5;
+const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 2.11;
 
 function CameraMotion() {
   useFrame((state) => {
