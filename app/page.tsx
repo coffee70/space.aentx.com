@@ -1,4 +1,5 @@
 import SpaceBackgroundClient from "@/components/space-background-client";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -10,8 +11,14 @@ export default function Home() {
       <div className="relative z-10 flex flex-col min-h-svh">
         <div className="fixed top-0 left-0 right-0 h-18 flex items-center px-8 z-20">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white rounded-full" />
-            <span className="text-lg font-semibold tracking-tight">Aentx</span>
+            <Image
+              src="/logo.png"
+              alt="Aentx logo"
+              width={32}
+              height={32}
+              priority
+              className="h-8 w-8 object-contain"
+            />
           </div>
         </div>
 

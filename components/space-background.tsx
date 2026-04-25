@@ -5,9 +5,9 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
-const EARTH_CENTER_Y = -13.9;
-const EARTH_RADIUS = 10.5;
-const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 2.11;
+const EARTH_CENTER_Y = -25.9;
+const EARTH_RADIUS = 20.5;
+const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 3.95;
 
 function CameraMotion() {
   useFrame((state) => {
@@ -73,6 +73,12 @@ function SunGlare() {
             alpha += horizontal * 0.16;
             alpha += softBloom;
 
+            float edgeFadeX = smoothstep(0.5, 0.38, abs(p.x));
+            float edgeFadeY = smoothstep(0.5, 0.38, abs(p.y));
+            float edgeFade = edgeFadeX * edgeFadeY;
+
+            alpha *= edgeFade;
+
             vec3 color = mix(vec3(0.42, 0.72, 1.0), vec3(1.0), core + rays * 0.8);
             gl_FragColor = vec4(color, alpha);
           }
@@ -90,7 +96,7 @@ function SunGlare() {
         <meshBasicMaterial color="#ffffff" transparent opacity={0.38} blending={AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      <mesh position={[0, 0, -0.04]} scale={[1.75, 1.75, 1]}>
+      <mesh position={[0, 0, -0.04]} scale={[5, 5, 1]}>
         <planeGeometry args={[1, 1]} />
         <primitive object={raysMaterial} attach="material" ref={raysRef} />
       </mesh>
@@ -99,16 +105,67 @@ function SunGlare() {
 }
 
 function Earth() {
+  const atmosphereMaterial = useMemo(
+    () =>
+      new ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        depthTest: false,
+        blending: AdditiveBlending,
+        side: BackSide,
+        uniforms: {
+          uColor: { value: [0.45, 0.78, 1.0] },
+          uIntensity: { value: 0.16 },
+        },
+        vertexShader: `
+          varying vec3 vNormal;
+          varying vec3 vViewPosition;
+
+          void main() {
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+
+            vNormal = normalize(normalMatrix * normal);
+            vViewPosition = -mvPosition.xyz;
+
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vNormal;
+          varying vec3 vViewPosition;
+
+          uniform vec3 uColor;
+          uniform float uIntensity;
+
+          void main() {
+            vec3 viewDir = normalize(vViewPosition);
+            float rim = 1.0 - abs(dot(normalize(vNormal), viewDir));
+
+            float thinRing = smoothstep(0.86, 0.99, rim);
+            float outerFade = smoothstep(1.0, 0.95, rim);
+
+            float alpha = thinRing * outerFade * uIntensity;
+
+            gl_FragColor = vec4(uColor, alpha);
+          }
+        `,
+      }),
+    []
+  );
+
   return (
     <group>
       <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS, EARTH_RADIUS, EARTH_RADIUS]}>
         <sphereGeometry args={[1, 192, 192]} />
-        <meshBasicMaterial color="#ff00cc" />
+        <meshBasicMaterial color="#020714" />
       </mesh>
 
-      <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035, EARTH_RADIUS + 0.035]}>
+      <mesh
+        position={[0, EARTH_CENTER_Y, 0]}
+        scale={[EARTH_RADIUS + 0.055, EARTH_RADIUS + 0.055, EARTH_RADIUS + 0.055]}
+      >
         <sphereGeometry args={[1, 192, 192]} />
-        <meshBasicMaterial color="#ff00cc" transparent opacity={0.35} blending={AdditiveBlending} side={BackSide} depthWrite={false} />
+        <primitive object={atmosphereMaterial} attach="material" />
       </mesh>
     </group>
   );
