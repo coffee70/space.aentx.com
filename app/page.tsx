@@ -30,6 +30,15 @@ export default function Home() {
             <p className="mt-6 text-[clamp(1rem,1.4vw,1.25rem)] leading-7 text-white/70">
               Aentx builds software for the next generation of space operations.
             </p>
+            <div className="mt-8 flex justify-center">
+              <a
+                href="#"
+                className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium tracking-tight text-white shadow-[0_0_30px_rgba(120,180,255,0.18)] backdrop-blur-md transition hover:border-white/35 hover:bg-white/15 hover:shadow-[0_0_42px_rgba(120,180,255,0.28)]"
+              >
+                <span>See Demo</span>
+                <span className="transition-transform group-hover:translate-x-0.5">-&gt;</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
