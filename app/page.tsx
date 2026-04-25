@@ -15,10 +15,10 @@ export default function Home() {
             <Image
               src="/logo.png"
               alt="Aentx logo"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
               priority
-              className="h-8 w-8 object-contain"
+              className="h-10 w-10 object-contain"
             />
           </div>
         </div>
