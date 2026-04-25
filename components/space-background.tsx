@@ -67,10 +67,10 @@ function SunGlare() {
             float d = length(p);
             float a = atan(p.y, p.x);
 
-            float core = smoothstep(0.115, 0.0, d);
-            float halo = smoothstep(0.9, 0.03, d) * exp(-d * 1.45);
+            float core = exp(-d * d * 145.0);
+            float halo = exp(-d * 3.4) * 0.52;
 
-            float rayFade = 1.0 / (1.0 + d * 7.5 + d * d * 26.0);
+            float rayFade = exp(-d * 3.2);
 
             float rays = 0.0;
             rays += pow(max(0.0, sin(a * 7.0 + uTime * 0.08)), 34.0) * 0.22;
@@ -78,17 +78,17 @@ function SunGlare() {
             rays += pow(max(0.0, sin(a * 23.0 + uTime * 0.04)), 62.0) * 0.08;
             rays *= rayFade;
 
-            float horizontal = exp(-abs(p.y) * 22.0) * smoothstep(0.9, 0.03, abs(p.x)) * exp(-d * 1.15);
-            float softBloom = smoothstep(0.95, 0.0, d) * exp(-d * 1.8) * 0.05;
+            float horizontal = exp(-abs(p.y) * 22.0) * exp(-d * 1.45) * 0.62;
+            float softBloom = exp(-d * 4.2) * 0.045;
 
-            float alpha = core * 0.86;
-            alpha += halo * 0.052;
-            alpha += rays * 0.26;
-            alpha += horizontal * 0.11;
+            float alpha = core * 0.88;
+            alpha += halo * 0.075;
+            alpha += rays * 0.32;
+            alpha += horizontal * 0.12;
             alpha += softBloom;
 
-            float edgeFadeX = smoothstep(0.5, 0.18, abs(p.x));
-            float edgeFadeY = smoothstep(0.5, 0.18, abs(p.y));
+            float edgeFadeX = 1.0 - pow(clamp(abs(p.x) * 2.0, 0.0, 1.0), 5.5);
+            float edgeFadeY = 1.0 - pow(clamp(abs(p.y) * 2.0, 0.0, 1.0), 5.5);
             float edgeFade = edgeFadeX * edgeFadeY;
 
             alpha *= edgeFade;
