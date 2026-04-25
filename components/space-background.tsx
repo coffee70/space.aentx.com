@@ -5,13 +5,24 @@ import { Stars } from "@react-three/drei";
 import { AdditiveBlending, BackSide, ShaderMaterial } from "three";
 import { useMemo, useRef } from "react";
 
-const EARTH_CENTER_Y = -25.9;
-const EARTH_RADIUS = 20.5;
-const SUN_Y = EARTH_CENTER_Y + EARTH_RADIUS + 3.95;
+/**
+ * Tune these independently.
+ *
+ * EARTH_Y moves the Earth up/down.
+ * EARTH_SCALE controls the actual sphere size.
+ * SUN_Y moves the sun up/down independently.
+ */
+const EARTH_Y = -25.9;
+const EARTH_SCALE = 20.5;
+const ATMOSPHERE_OFFSET = 0.055;
+
+const SUN_Y = -1.45;
+const SUN_Z = 1.18;
 
 function CameraMotion() {
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
+
     state.camera.position.x = Math.sin(t * 0.04) * 0.035;
     state.camera.position.y = 1.02 + Math.sin(t * 0.032) * 0.02;
     state.camera.lookAt(0, -1.15, 0);
@@ -88,12 +99,18 @@ function SunGlare() {
   );
 
   return (
-    <group position={[0, SUN_Y, 1.18]}>
+    <group position={[0, SUN_Y, SUN_Z]}>
       <pointLight intensity={90} distance={24} color="#ffffff" />
 
       <mesh>
         <sphereGeometry args={[0.016, 24, 24]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.38} blending={AdditiveBlending} depthWrite={false} />
+        <meshBasicMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.38}
+          blending={AdditiveBlending}
+          depthWrite={false}
+        />
       </mesh>
 
       <mesh position={[0, 0, -0.04]} scale={[5, 5, 1]}>
@@ -155,14 +172,21 @@ function Earth() {
 
   return (
     <group>
-      <mesh position={[0, EARTH_CENTER_Y, 0]} scale={[EARTH_RADIUS, EARTH_RADIUS, EARTH_RADIUS]}>
+      <mesh
+        position={[0, EARTH_Y, 0]}
+        scale={[EARTH_SCALE, EARTH_SCALE, EARTH_SCALE]}
+      >
         <sphereGeometry args={[1, 192, 192]} />
         <meshBasicMaterial color="#020714" />
       </mesh>
 
       <mesh
-        position={[0, EARTH_CENTER_Y, 0]}
-        scale={[EARTH_RADIUS + 0.055, EARTH_RADIUS + 0.055, EARTH_RADIUS + 0.055]}
+        position={[0, EARTH_Y, 0]}
+        scale={[
+          EARTH_SCALE + ATMOSPHERE_OFFSET,
+          EARTH_SCALE + ATMOSPHERE_OFFSET,
+          EARTH_SCALE + ATMOSPHERE_OFFSET,
+        ]}
       >
         <sphereGeometry args={[1, 192, 192]} />
         <primitive object={atmosphereMaterial} attach="material" />
