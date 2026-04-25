@@ -68,29 +68,34 @@ function SunGlare() {
             float a = atan(p.y, p.x);
 
             float core = smoothstep(0.115, 0.0, d);
-            float halo = smoothstep(0.58, 0.02, d);
+            float halo = smoothstep(0.74, 0.03, d);
+
+            float radialRayFade = exp(-d * 2.85);
+            float outerRayFade = smoothstep(0.82, 0.12, d);
+            float rayFade = radialRayFade * outerRayFade;
 
             float rays = 0.0;
             rays += pow(max(0.0, sin(a * 7.0 + uTime * 0.08)), 34.0) * 0.22;
             rays += pow(max(0.0, sin(a * 13.0 - uTime * 0.06)), 46.0) * 0.16;
             rays += pow(max(0.0, sin(a * 23.0 + uTime * 0.04)), 62.0) * 0.08;
+            rays *= rayFade;
 
-            float horizontal = exp(-abs(p.y) * 34.0) * smoothstep(0.72, 0.03, abs(p.x));
-            float softBloom = smoothstep(0.62, 0.0, d) * 0.06;
+            float horizontal = exp(-abs(p.y) * 22.0) * smoothstep(0.9, 0.03, abs(p.x)) * exp(-d * 1.15);
+            float softBloom = smoothstep(0.86, 0.0, d) * exp(-d * 2.1) * 0.055;
 
             float alpha = core * 0.86;
-            alpha += halo * 0.075;
-            alpha += rays * halo * 0.18;
-            alpha += horizontal * 0.16;
+            alpha += halo * 0.055;
+            alpha += rays * 0.2;
+            alpha += horizontal * 0.11;
             alpha += softBloom;
 
-            float edgeFadeX = smoothstep(0.5, 0.38, abs(p.x));
-            float edgeFadeY = smoothstep(0.5, 0.38, abs(p.y));
+            float edgeFadeX = smoothstep(0.5, 0.18, abs(p.x));
+            float edgeFadeY = smoothstep(0.5, 0.18, abs(p.y));
             float edgeFade = edgeFadeX * edgeFadeY;
 
             alpha *= edgeFade;
 
-            vec3 color = mix(vec3(0.42, 0.72, 1.0), vec3(1.0), core + rays * 0.8);
+            vec3 color = mix(vec3(0.42, 0.72, 1.0), vec3(1.0), core + rays * 0.75);
             gl_FragColor = vec4(color, alpha);
           }
         `,
@@ -113,7 +118,7 @@ function SunGlare() {
         />
       </mesh>
 
-      <mesh position={[0, 0, -0.04]} scale={[5, 5, 1]}>
+      <mesh position={[0, 0, -0.04]} scale={[8.5, 8.5, 1]}>
         <planeGeometry args={[1, 1]} />
         <primitive object={raysMaterial} attach="material" ref={raysRef} />
       </mesh>
