@@ -13,7 +13,7 @@ export default function Home() {
         <div className="fixed top-0 left-0 right-0 h-18 flex items-center px-8 z-20">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/aentx-logo.png"
               alt="Aentx logo"
               width={40}
               height={40}
